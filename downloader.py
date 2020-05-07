@@ -4,7 +4,7 @@ import urllib.request
 import zipfile
 
 # Change this to change the delay between downloads
-delayInputValue = int(0)
+delayInputValue = 0
 
 # Warnings
 print("Warning: this script will take at least a week to run completely and may get you IP banned from archive.org")
