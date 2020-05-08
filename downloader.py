@@ -86,4 +86,4 @@ for i in inputCDXList:
 print("Downloading complete!")
 print(str(kwzFileTotalCount) + " of 237,462 .kwz files downloaded.")
 print(str(jpgFileTotalCount) + " of 237,463 .jpg files downloaded.")
-print(str(kwzFileTotalCount + jpgFileTotalCount) + " files downloaded of 474,927 total.")
+print(str(kwzFileTotalCount + jpgFileTotalCount) + " files downloaded of 474,925 total.")
