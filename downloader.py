@@ -3,7 +3,7 @@ import time
 import urllib.request
 import zipfile
 
-# Change this to change the delay between downloads
+# Change the "0" here to change the delay (in seconds) between downloads
 delayInputValue = 0
 
 # Warnings
@@ -19,7 +19,6 @@ jpgFileTotalCount = int(0)
 kwzFileTotalCount = int(0)
 workingDirectory = os.path.join(os.getcwd())
 
-# Create /download/ folder for output files if it doesn't exist
 if os.path.exists(os.path.join(workingDirectory, "download")) is False:
     os.mkdir(os.path.join(workingDirectory, "download"))
 
@@ -43,7 +42,6 @@ for i in inputCDXFile:
     inputCDXList.append(i)
 inputCDXFile.close()
 
-# Checking for previous completed URLs to skip
 if os.path.isfile(os.path.join(workingDirectory, "finished_urls.txt")) is True:
     finishedTextFile = open(os.path.join(workingDirectory, "finished_urls.txt"))
     for i in finishedTextFile:
@@ -53,32 +51,39 @@ if os.path.isfile(os.path.join(workingDirectory, "finished_urls.txt")) is True:
         elif ".kwz" in i:
             kwzFileTotalCount = kwzFileTotalCount + 1
     finishedTextFile.close()
+
 for i in inputCDXList:
-    # Making the input from cdx.txt a valid URL
     processedURL = str("http://web.archive.org/web/" + str(str(i[84:])[:105]).replace(" ", "/"))
     # File name: characters 101 to 128
     fileName = processedURL[100:]
-    # "kwz/xxxxxxxxxxxxxxxx/yyyyyyyyyyyyyyyyyyyyyyyyyyyy.kwz or .jpg/"
-    #           ^ that part is the user ID
     # User ID: Characters 84 to 99
     userID = str(processedURL[83:])[:-33]
     if os.path.exists(os.path.join(workingDirectory, "download", userID)) is False:
         os.mkdir(os.path.join(workingDirectory, "download", userID))
     if os.path.isfile(os.path.join(workingDirectory, "download", userID, fileName)) is False:
-        urllib.request.urlretrieve(processedURL, os.path.join(workingDirectory, "download", userID, fileName))
-        print("Downloaded " + str(kwzFileTotalCount + jpgFileTotalCount + 1) + " of 474049 files.")
-        outputLog = open(os.path.join(workingDirectory + "finished_urls.txt"), "w")
-        outputLog.write("Downloaded: " + processedURL)
-        outputLog.close()
-        time.sleep(delayInputValue)
-        if ".jpg" in fileName:
-            jpgFileTotalCount = jpgFileTotalCount + 1
-        elif ".kwz" in fileName:
-            kwzFileTotalCount = kwzFileTotalCount + 1
+        try:
+            urllib.request.urlretrieve(processedURL, os.path.join(workingDirectory, "download", userID, fileName))
+            print("Downloaded " + str(kwzFileTotalCount + jpgFileTotalCount + 1) + " of 474,927 files.")
+            outputLog = open(os.path.join(workingDirectory, "finished_urls.txt"), "w")
+            outputLog.write("Downloaded: " + processedURL)
+            outputLog.close()
+            time.sleep(delayInputValue)
+            if ".jpg" in fileName:
+                jpgFileTotalCount = jpgFileTotalCount + 1
+            elif ".kwz" in fileName:
+                kwzFileTotalCount = kwzFileTotalCount + 1
+        except Exception as errorException:
+            print("Error on url: " + processedURL)
+            print(errorException)
+            errorFile = open(os.path.join(workingDirectory, "error.txt"), "w")
+            errorFile.write("Error on url: " + processedURL)
+            errorFile.write(str(errorException))
+            errorFile.close()
+
     else:
         print("Skipped duplicate: " + processedURL)
 
 print("Downloading complete!")
-print(str(kwzFileTotalCount) + " of 237024 .kwz files downloaded.")
-print(str(jpgFileTotalCount) + " of 237025 .jpg files downloaded.")
-print(str(kwzFileTotalCount + jpgFileTotalCount) + " files downloaded in total.")
+print(str(kwzFileTotalCount) + " of 237,462 .kwz files downloaded.")
+print(str(jpgFileTotalCount) + " of 237,463 .jpg files downloaded.")
+print(str(kwzFileTotalCount + jpgFileTotalCount) + " files downloaded of 474,927 total.")
