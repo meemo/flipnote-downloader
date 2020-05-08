@@ -11,14 +11,14 @@ Project was inspired by https://github.com/Flipnote-Collective/flipnote-fetcher
 That project lacks a bulk downloading script, so I made one myself
 # Misc folder
 The misc folder contains the script I used to transfer my initial download that didn't preserve folder structure in to the proper structure. 
-# Files.html
-Files.html is an HTML file snapshot of the entire output of this script, created with Snap2HTML
+# Files.zip
+Files.zip contains an HTML file snapshot of the entire output of this script, created with Snap2HTML
 https://www.rlvision.com/snap2html/
 https://github.com/rlv-dan/Snap2HTML
 # cdx.txt
 cdx.txt is derived from the output of archive.org's cdx tool by going to the following URL:
 
-    "http://web.archive.org/cdx/search/cdx?matchType=prefix&filter=original:\S*.kwz$&output=json&url=jkz-dsidata.s3.amazonaws.com/kwz/"
+    http://web.archive.org/cdx/search/cdx?matchType=prefix&url=jkz-dsidata.s3.amazonaws.com/kwz/
 And saving the page as a text file. I already did this and the script downloads the file from archive.org for you.
 # TL;DR
 This is a script that will download [archive.org](https://www.archive.org)'s copy of Flipnote Hatena Gallery's S3 buckets in the correct (original) folder structure.  
