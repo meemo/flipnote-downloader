@@ -18,7 +18,9 @@ https://github.com/rlv-dan/Snap2HTML
 # cdx.txt
 cdx.txt is derived from the output of archive.org's cdx tool by going to the following URL:
 
+
     http://web.archive.org/cdx/search/cdx?matchType=prefix&url=jkz-dsidata.s3.amazonaws.com/kwz/
+
 And saving the page as a text file. I already did this and the script downloads the file from archive.org for you.
 # TL;DR
 This is a script that will download [archive.org](https://www.archive.org)'s copy of Flipnote Hatena Gallery's S3 buckets in the correct (original) folder structure.  
