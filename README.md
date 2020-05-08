@@ -1,3 +1,6 @@
+# Pre Downloaded Version
+I already ran this script and uploaded it to archive.org at the following URL:
+https://archive.org/details/flipnote-hatena-archive
 # Usage
 I will soon be uploading this to archive.org, so you do not need to run this script!
 Just run downloader.py in any directory, and let it run for roughly the week it will take to run.
@@ -6,6 +9,12 @@ To modify the delay between downloads of files, edit line 7 of downloader.py
 # Origin
 Project was inspired by https://github.com/Flipnote-Collective/flipnote-fetcher
 That project lacks a bulk downloading script, so I made one myself
+# Misc folder
+The misc folder contains the script I used to transfer my initial download that didn't preserve folder structure in to the proper structure. 
+# Files.html
+Files.html is an HTML file snapshot of the entire output of this script, created with Snap2HTML
+https://www.rlvision.com/snap2html/
+https://github.com/rlv-dan/Snap2HTML
 # cdx.txt
 cdx.txt is derived from the output of archive.org's cdx tool by going to the following URL:
 
