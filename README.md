@@ -5,9 +5,7 @@ To modify the delay between downloads of files, edit line 7 of downloader.py
 **Warning: archive.org will most likely rate limit or even ban your IP from this without using proper delays and/or using a VPN. It is recommended to run this script in bursts over a long period of time, since the script will continue where you last finished downloading.**
 # Origin
 Project was inspired by https://github.com/Flipnote-Collective/flipnote-fetcher
-That project lacks a bulk downloading script, so I made one myself
-# Misc folder
-The misc folder contains the script I used to transfer my initial download that didn't preserve folder structure in to the proper structure. 
+That project lacks a bulk downloading function, so I made one myself
 # Files.zip
 Files.zip contains an HTML file snapshot of the entire output of this script, created with Snap2HTML
 https://www.rlvision.com/snap2html/
@@ -18,6 +16,6 @@ cdx.txt is derived from the output of archive.org's cdx tool by going to the fol
 
     http://web.archive.org/cdx/search/cdx?matchType=prefix&url=jkz-dsidata.s3.amazonaws.com/kwz/
 
-And saving the page as a text file. I already did this and the script downloads the file from archive.org for you.
+And saving the page as a text file. I already did this and have added together the many different versions with varying amounts of entries for easier downloading.
 # TL;DR
 This is a script that will download [archive.org](https://www.archive.org)'s copy of Flipnote Hatena Gallery's S3 buckets in the correct (original) folder structure.  
