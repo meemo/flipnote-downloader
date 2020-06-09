@@ -6,7 +6,12 @@ import zipfile
 # Change the "0" here to change the delay (in seconds) between downloads
 delayInputValue = 0
 
-# Warnings
+# Totals for file types
+totalJPG = 237841
+totalKWZ = 237841
+totalTotal = 475682
+
+# Print Warnings
 print("Warning: this script will take at least a week to run completely and may get you IP banned from archive.org")
 print("Please use a VPN and set a delay wisely!")
 print("This script can be exited and continued from where you left off")
@@ -63,7 +68,7 @@ for i in inputCDXList:
     if os.path.isfile(os.path.join(workingDirectory, "download", userID, fileName)) is False:
         try:
             urllib.request.urlretrieve(processedURL, os.path.join(workingDirectory, "download", userID, fileName))
-            print("Downloaded " + str(kwzFileTotalCount + jpgFileTotalCount + 1) + " of 474,927 files.")
+            print("Downloaded " + str(kwzFileTotalCount + jpgFileTotalCount + 1) + " of " + str(totalTotal) + " files.")
             outputLog = open(os.path.join(workingDirectory, "finished_urls.txt"), "w")
             outputLog.write("Downloaded: " + processedURL)
             outputLog.close()
@@ -84,6 +89,6 @@ for i in inputCDXList:
         print("Skipped duplicate: " + processedURL)
 
 print("Downloading complete!")
-print(str(kwzFileTotalCount) + " of 237,841 .kwz files downloaded.")
-print(str(jpgFileTotalCount) + " of 237,841 .jpg files downloaded.")
-print(str(kwzFileTotalCount + jpgFileTotalCount) + " files downloaded of 475,682‬ total.")
+print(str(kwzFileTotalCount) + " of " + str(totalKWZ) + " .kwz files downloaded.")
+print(str(jpgFileTotalCount) + " of " + str(totalJPG) + " .jpg files downloaded.")
+print(str(kwzFileTotalCount + jpgFileTotalCount) + " files downloaded of " + str(totalTotal) + "‬ total.")
