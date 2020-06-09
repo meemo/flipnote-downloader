@@ -84,6 +84,6 @@ for i in inputCDXList:
         print("Skipped duplicate: " + processedURL)
 
 print("Downloading complete!")
-print(str(kwzFileTotalCount) + " of 237,462 .kwz files downloaded.")
-print(str(jpgFileTotalCount) + " of 237,463 .jpg files downloaded.")
-print(str(kwzFileTotalCount + jpgFileTotalCount) + " files downloaded of 474,925 total.")
+print(str(kwzFileTotalCount) + " of 237,841 .kwz files downloaded.")
+print(str(jpgFileTotalCount) + " of 237,841 .jpg files downloaded.")
+print(str(kwzFileTotalCount + jpgFileTotalCount) + " files downloaded of 475,682‬ total.")
