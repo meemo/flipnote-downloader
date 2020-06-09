@@ -1,6 +1,3 @@
-# Pre Downloaded Version
-I already ran this script and uploaded it to archive.org at the following URL:
-https://archive.org/details/flipnote-hatena-archive
 # Usage
 I will soon be uploading this to archive.org, so you do not need to run this script!
 Just run downloader.py in any directory, and let it run for roughly the week it will take to run.
