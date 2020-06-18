@@ -1,5 +1,6 @@
 # Usage
 `downloader.py <delay in seconds (optional, defaults to 0)>`
+
 I will soon be uploading this to archive.org, so you do not need to run this script!
 Just run downloader.py in any directory, and let it run for roughly the week it will take to run.
 To modify the delay between downloads of files, edit line 7 of downloader.py
