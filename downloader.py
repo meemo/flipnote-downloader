@@ -28,8 +28,8 @@ otherFileTotalCount = 0
 linesProcessed = 0
 workingDirectory = os.path.join(os.getcwd())
 
-if os.path.exists(os.path.join(workingDirectory, "download")) is False:
-    os.mkdir(os.path.join(workingDirectory, "download"))
+if os.path.exists(os.path.join(workingDirectory, "kwz")) is False:
+    os.mkdir(os.path.join(workingDirectory, "kwz"))
 
 if os.path.isfile("cdx.txt") is False:
     print("Existing cdx.txt file not found, downloading.")
@@ -57,11 +57,11 @@ for i in inputCDXList:
     # File name: characters 101 to 128, User ID: Characters 84 to 99
     fileName = processedURL[100:]
     userID = str(processedURL[83:])[:-33]
-    if os.path.exists(os.path.join(workingDirectory, "download", userID)) is False:
-        os.mkdir(os.path.join(workingDirectory, "download", userID))
-    if os.path.isfile(os.path.join(workingDirectory, "download", userID, fileName)) is False:
+    if os.path.exists(os.path.join(workingDirectory, "kwz", userID)) is False:
+        os.mkdir(os.path.join(workingDirectory, "kwz", userID))
+    if os.path.isfile(os.path.join(workingDirectory, "kwz", userID, fileName)) is False:
         try:
-            urllib.request.urlretrieve(processedURL, os.path.join(workingDirectory, "download", userID, fileName))
+            urllib.request.urlretrieve(processedURL, os.path.join(workingDirectory, "kwz", userID, fileName))
             linesProcessed += 1
             if ".jpg" in fileName:
                 jpgFileTotalCount += 1
