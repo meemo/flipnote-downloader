@@ -14,19 +14,17 @@ if len(sys.argv) >= 2:
 else:
     delayInputValue = 0
 
-# Print Warnings
-print("Warning: this script will take at least a week to run completely and may get you IP banned from archive.org")
-print("Please use a VPN and set a delay wisely!")
-print("This script can be exited and continued from where you left off")
-time.sleep(3)
-
+startTime = time.time()
 sourceURL = "http://web.archive.org/cdx/search/cdx?matchType=prefix&url=jkz-dsidata.s3.amazonaws.com/kwz/"
 inputCDXList = []
 kwzFileTotalCount = 0
 jpgFileTotalCount = 0
-otherFileTotalCount = 0
 linesProcessed = 0
 workingDirectory = os.path.join(os.getcwd())
+
+print("Warning: this script will take at least a week to run completely and may get you IP banned from archive.org")
+print("Please use a VPN and set a delay wisely!")
+time.sleep(3)
 
 if os.path.exists(os.path.join(workingDirectory, "kwz")) is False:
     os.mkdir(os.path.join(workingDirectory, "kwz"))
@@ -37,7 +35,7 @@ if os.path.isfile("cdx.txt") is False:
         if response.getcode() == 200:
             print("HTTP response good.")
             inputCDXList = response.read().decode()
-            outputCDXTextFile = open("cdx.txt", "w", newline='\n')
+            outputCDXTextFile = open("cdx.txt", "w", newline="\n")
             outputCDXTextFile.writelines(inputCDXList)
             outputCDXTextFile.close()
             print("cdx.txt created")
@@ -67,17 +65,19 @@ for i in inputCDXList:
                 jpgFileTotalCount += 1
             elif ".kwz" in fileName:
                 kwzFileTotalCount += 1
-            else:
-                otherFileTotalCount += 1
-            print("Downloaded file number " + str(kwzFileTotalCount + jpgFileTotalCount + otherFileTotalCount) + ".")
+            print("Downloaded new file #" + str(kwzFileTotalCount + jpgFileTotalCount) +
+                  " from: " + processedURL)
             time.sleep(delayInputValue)
         except Exception as errorException:
-            print("Error on line " + str(linesProcessed) + ", url: " + processedURL)
-            print(errorException)
+            print("Error on line " + str(linesProcessed) + ", url: " + processedURL + ": " + str(errorException))
+            errorOutputFile = open("error.txt", "a", newline="\n")
+            errorOutputFile.write("Line_" + str(linesProcessed) + "_URL_" + processedURL
+                                  + "_Error_" + str(errorException) + "\n")
+            errorOutputFile.close()
     else:
-        print("Skipped duplicate: " + processedURL)
+        print("Duplicate on line: " + str(linesProcessed) + ", URL: " + processedURL)
 
-print("Downloading complete!")
-print(str(kwzFileTotalCount) + " .kwz files downloaded.")
-print(str(jpgFileTotalCount) + " .jpg files downloaded.")
-print(str(otherFileTotalCount) + " other files downloaded.")
+print("Downloading completed in " + str(round(time.time() - startTime, 2)))
+print(str(kwzFileTotalCount + jpgFileTotalCount) + " files downloaded total, " +
+      str(kwzFileTotalCount) + " .kwz and " +
+      str(jpgFileTotalCount) + " .jpg files.")
