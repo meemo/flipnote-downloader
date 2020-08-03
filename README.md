@@ -9,11 +9,7 @@ To modify the delay between downloads of files, edit line 7 of downloader.py
 # Origin
 Project was inspired by https://github.com/Flipnote-Collective/flipnote-fetcher
 That project lacks a bulk downloading function, so I made one myself
-# Flipnotes.zip
-Flipnotes.zip contains an HTML file snapshot of the entire file output of this script, created with Snap2HTML
-https://www.rlvision.com/snap2html/
-https://github.com/rlv-dan/Snap2HTML
-# cdx.txt
+# cdx.txt explanation
 cdx.txt is derived from the output of archive.org's cdx tool by going to the following URL:
 
 
