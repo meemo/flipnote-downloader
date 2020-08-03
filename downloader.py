@@ -70,7 +70,7 @@ for i in inputCDXList:
             urllib.request.install_opener(urlOpener)
             urllib.request.urlretrieve(processedURL, os.path.join(filePath, fileName))
             filesDownloaded += 1
-            print("Downloaded file #" + str(filesDownloaded) + " from: " + processedURL + ", line: " + str(currentLine))
+            print("Downloaded file #" + str(filesDownloaded) + ", line " + str(currentLine) + ", URL: " + processedURL)
         except Exception as errorException:
             print("Error on line " + str(currentLine) + ", url: " + processedURL + ", " + str(errorException))
             errorOutputFile = open("error.txt", "a", newline="\n")
