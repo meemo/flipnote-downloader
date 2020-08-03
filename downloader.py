@@ -11,7 +11,7 @@ downloadingDirectory = os.path.join(os.getcwd(), "kwz")
 inputCDXList = []
 delayInputValue = 0
 filesDownloaded = 0
-currentLine = 1
+currentLine = 0
 
 # Check if there was a delay value specified when running the script
 if len(sys.argv) >= 2:
