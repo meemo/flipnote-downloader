@@ -1,3 +1,5 @@
+This script is currently broken! Working on a fix.
+
 # Usage
 `downloader.py [delay in seconds (optional, defaults to 0)]`
 
