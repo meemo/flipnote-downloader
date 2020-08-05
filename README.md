@@ -1,9 +1,5 @@
-This script is currently broken! Working on a fix.
-
 # Usage
 `downloader.py [delay in seconds (optional, defaults to 0)]`
-
-**NOTE: This script will not work on windows! It will result in incorrectly downloaded files, so use linux!**
 
 A pre downloaded version can be found here: https://archive.org/details/flipnote-hatena-archive
 

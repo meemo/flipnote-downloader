@@ -55,8 +55,9 @@ else:
 
 for i in inputCDXList:
     currentLine += 1
+    # Make a valid url that's able to be fetched from the cdx file lines
     processedURL = str("http://web.archive.org/web/" + str(str(i[84:])[:105]).replace(" ", "if_/"))
-    # File name: characters 101 to 128, Author ID: characters 84 to 99
+    # File name: characters 101 to 128. Author ID: characters 84 to 99
     fileName = processedURL[103:]
     authorID = str(processedURL[86:])[:-33]
     filePath = os.path.join(downloadingDirectory, authorID)
@@ -64,13 +65,31 @@ for i in inputCDXList:
         os.mkdir(filePath)
     if os.path.isfile(os.path.join(filePath, fileName)) is False:
         try:
-            # Newer urls would fail to download properly, adding headers (below) forces it to download the right file.
+            # Unsure if the following added headers are assisting
             urlOpener = urllib.request.build_opener()
             urlOpener.addheaders = [('Content-type', 'application/octet-stream')]
             urllib.request.install_opener(urlOpener)
+            # Download
             urllib.request.urlretrieve(processedURL, os.path.join(filePath, fileName))
-            filesDownloaded += 1
-            print("Downloaded file #" + str(filesDownloaded) + ", line " + str(currentLine) + ", URL: " + processedURL)
+            # Checks for 0 byte files
+            if os.path.getsize(os.path.join(filePath, fileName)) == 0:
+                print("0 Byte file detected!")
+                # Log the error
+                open("weird_errors_0_byte.txt", "a", newline="\n").write(processedURL + "\n")
+                os.remove(os.path.join(filePath, fileName))
+                print("Deleted 0 byte file.")
+            # Checks for the bad HTML files downloaded as kwz/jpg files by error.
+            # The bad HTML files always start with `<!DOCTYPE html>` but the jpg or KWZ files don't, so check for that.
+            elif str(open(os.path.join(filePath, fileName), "rb").read().decode("ansi")).startswith("<!DOC") is True:
+                # Log the error
+                open("weird_errors.txt", "a", newline="\n").write(processedURL + "\n")
+                os.remove(os.path.join(filePath, fileName))
+                print("Deleted bad file created by the weird error.")
+            else:
+                # File passed all checks, proceed.
+                filesDownloaded += 1
+                print("Downloaded file #" + str(filesDownloaded) + ", line " + str(currentLine) + ", URL: "
+                      + processedURL)
         except Exception as errorException:
             print("Error on line " + str(currentLine) + ", url: " + processedURL + ", " + str(errorException))
             errorOutputFile = open("error.txt", "a", newline="\n")
