@@ -2,18 +2,20 @@ import os
 import time
 import urllib.request
 import sys
+import imghdr
 
-# Usage: downloader.py <delay in seconds (optional, defaults to 0)>
+# Usage: downloader.py [delay in seconds (optional, defaults to 0)]
 
 scriptStartTime = time.time()
 sourceURL = "http://web.archive.org/cdx/search/cdx?matchType=prefix&url=jkz-dsidata.s3.amazonaws.com/kwz/"
 downloadingDirectory = os.path.join(os.getcwd(), "kwz")
+
 inputCDXList = []
 delayInputValue = 0
 filesDownloaded = 0
 currentLine = 0
 
-# Check if there was a delay value specified when running the script
+# Check for delay value specified
 if len(sys.argv) >= 2:
     if sys.argv[1].isnumeric() is True:
         delayInputValue = int(sys.argv[1])
@@ -23,11 +25,10 @@ if len(sys.argv) >= 2:
 else:
     delayInputValue = 0
 
-# Print warnings
-print("Warning: this script will take about a month to run completely and may get you IP banned from archive.org")
-print("Errors are fairly normal, rerun the script and they will be automatically tried again.")
+print("Warning: this script will take about a month to fully run.")
+print("In that time, you may have your IP blocked from archive.org.")
 print("Please set a delay value wisely! Delay is currently set to " + str(delayInputValue) + " seconds.")
-time.sleep(4)
+time.sleep(3)
 
 if os.path.exists(os.path.join(downloadingDirectory)) is False:
     os.mkdir(os.path.join(downloadingDirectory))
@@ -35,13 +36,10 @@ if os.path.isfile("cdx.txt") is False:
     print("Existing cdx.txt file not found, downloading.")
     with urllib.request.urlopen(sourceURL) as response:
         if response.getcode() == 200:
-            print("HTTP response good.")
-            print("This may take a few minutes, do not close out the script.")
+            print("This may take a few minutes, script is not frozen.")
             inputCDXList = response.read().decode()
-            outputCDXTextFile = open("cdx.txt", "w", newline="\n")
-            outputCDXTextFile.writelines(inputCDXList)
-            outputCDXTextFile.close()
-            print("cdx.txt downloaded successfully.")
+            open("cdx.txt", "w", newline="\n").writelines(inputCDXList)
+            print("cdx.txt file downloaded successfully.")
         else:
             # Request failed
             print("Connection to archive.org failed, please check your connection or try again later.")
@@ -49,13 +47,10 @@ if os.path.isfile("cdx.txt") is False:
             exit()
 else:
     print("Existing cdx.txt found!")
-    inputCDXFile = open("cdx.txt")
-    inputCDXList = inputCDXFile.readlines()
-    inputCDXFile.close()
+    inputCDXList = open("cdx.txt").readlines()
 
 for i in inputCDXList:
     currentLine += 1
-    # Make a valid url that's able to be fetched from the cdx file lines
     processedURL = str("http://web.archive.org/web/" + str(str(i[84:])[:105]).replace(" ", "if_/"))
     # File name: characters 101 to 128. Author ID: characters 84 to 99
     fileName = processedURL[103:]
@@ -65,32 +60,35 @@ for i in inputCDXList:
         os.mkdir(filePath)
     if os.path.isfile(os.path.join(filePath, fileName)) is False:
         try:
-            # Unsure if the following added headers are assisting
             urlOpener = urllib.request.build_opener()
             urlOpener.addheaders = [('Content-type', 'application/octet-stream')]
             urllib.request.install_opener(urlOpener)
-            # Download
             urllib.request.urlretrieve(processedURL, os.path.join(filePath, fileName))
-            # Checks for 0 byte files
             if os.path.getsize(os.path.join(filePath, fileName)) == 0:
+                # Check for 0 byte files
                 print("0 Byte file detected!")
-                # Log the error
-                open("weird_errors_0_byte.txt", "a", newline="\n").write(processedURL + "\n")
+                open("error_files_deleted.txt", "a", newline="\n").write(processedURL + "\n")
                 os.remove(os.path.join(filePath, fileName))
-                print("Deleted 0 byte file.")
-            # Checks for the bad HTML files downloaded as kwz/jpg files by error.
-            # The bad HTML files always start with `<!DOCTYPE html>` but the jpg or KWZ files don't, so check for that.
-            elif str(open(os.path.join(filePath, fileName), "rb").read().decode("ansi")).startswith("<!DOC") is True:
-                # Log the error
-                open("weird_errors.txt", "a", newline="\n").write(processedURL + "\n")
-                os.remove(os.path.join(filePath, fileName))
-                print("Deleted bad file created by the weird error.")
+                print("Deleted invalid file.")
+            elif ".kwz" in fileName:
+                # kwz files always start with "KFH" when decoded to ansi.
+                if str(open(os.path.join(filePath, fileName), "rb").read().decode("ansi")).startswith("KFH") is False:
+                    open("error_files_deleted.txt", "a", newline="\n").write(processedURL + "\n")
+                    os.remove(os.path.join(filePath, fileName))
+                    print("Deleted invalid file.")
+            elif ".jpg" in fileName:
+                # Ensure jpg files are valid using imghdr
+                if imghdr.what(os.path.join(filePath, fileName)) != "jpeg":
+                    open("error_files_deleted.txt", "a", newline="\n").write(processedURL + "\n")
+                    os.remove(os.path.join(filePath, fileName))
+                    print("Deleted invalid file.")
             else:
-                # File passed all checks, proceed.
+                # File passed all checks
                 filesDownloaded += 1
                 print("Downloaded file #" + str(filesDownloaded) + ", line " + str(currentLine) + ", URL: "
                       + processedURL)
         except Exception as errorException:
+            # General error catching from urllib.request
             print("Error on line " + str(currentLine) + ", url: " + processedURL + ", " + str(errorException))
             errorOutputFile = open("error.txt", "a", newline="\n")
             errorOutputFile.write("Line_" + str(currentLine) + "_URL_" + processedURL + "_Error_" + str(errorException))
