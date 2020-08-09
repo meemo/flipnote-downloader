@@ -15,6 +15,21 @@ delayInputValue = 0
 filesDownloaded = 0
 currentLine = 0
 
+urlOpener = urllib.request.build_opener()
+urlOpener.addheaders = [('Content-type', 'application/octet-stream')]
+urllib.request.install_opener(urlOpener)
+
+if os.path.exists(os.path.join(downloadingDirectory)) is False:
+    os.mkdir(os.path.join(downloadingDirectory))
+
+
+def writeError(url, path, name):
+    print("Downloaded an invalid file: " + fileName)
+    open("error_files_deleted.txt", "a", newline="\n").write(processedURL + "\n")
+    os.remove(os.path.join(filePath, fileName))
+    print("Deleted invalid file.")
+
+
 # Check for delay value specified
 if len(sys.argv) >= 2:
     if sys.argv[1].isnumeric() is True:
@@ -26,12 +41,10 @@ else:
     delayInputValue = 0
 
 print("Warning: this script will take about a month to fully run.")
-print("In that time, you may have your IP blocked from archive.org.")
+print("In that time, it is possible that your IP will blocked or banned from archive.org.")
 print("Please set a delay value wisely! Delay is currently set to " + str(delayInputValue) + " seconds.")
 time.sleep(3)
 
-if os.path.exists(os.path.join(downloadingDirectory)) is False:
-    os.mkdir(os.path.join(downloadingDirectory))
 if os.path.isfile("cdx.txt") is False:
     print("Existing cdx.txt file not found, downloading.")
     with urllib.request.urlopen(sourceURL) as response:
@@ -51,42 +64,32 @@ else:
 
 for i in inputCDXList:
     currentLine += 1
-    processedURL = str("http://web.archive.org/web/" + str(str(i[84:])[:105]).replace(" ", "if_/"))
-    # File name: characters 101 to 128. Author ID: characters 84 to 99
+    # URL from CDX input: characters 84 to 189
+    # File name: from URL, characters 103 to the end (135). Author ID: from URL, characters 86 to 102
+    processedURL = str("http://web.archive.org/web/" + i[84:189].replace(" ", "if_/"))
     fileName = processedURL[103:]
-    authorID = str(processedURL[86:])[:-33]
+    authorID = processedURL[86:102]
     filePath = os.path.join(downloadingDirectory, authorID)
     if os.path.exists(filePath) is False:
         os.mkdir(filePath)
     if os.path.isfile(os.path.join(filePath, fileName)) is False:
         try:
-            urlOpener = urllib.request.build_opener()
-            urlOpener.addheaders = [('Content-type', 'application/octet-stream')]
-            urllib.request.install_opener(urlOpener)
             urllib.request.urlretrieve(processedURL, os.path.join(filePath, fileName))
+            # Check for 0 byte files
             if os.path.getsize(os.path.join(filePath, fileName)) == 0:
-                # Check for 0 byte files
-                print("0 Byte file detected!")
-                open("error_files_deleted.txt", "a", newline="\n").write(processedURL + "\n")
-                os.remove(os.path.join(filePath, fileName))
-                print("Deleted invalid file.")
+                writeError(processedURL, filePath, fileName)
+            # Valid kwz files always start with "KFH" when decoded to ansi.
             elif ".kwz" in fileName:
-                # kwz files always start with "KFH" when decoded to ansi.
                 if str(open(os.path.join(filePath, fileName), "rb").read().decode("ansi")).startswith("KFH") is False:
-                    open("error_files_deleted.txt", "a", newline="\n").write(processedURL + "\n")
-                    os.remove(os.path.join(filePath, fileName))
-                    print("Deleted invalid file.")
+                    writeError(processedURL, filePath, fileName)
+            # Ensure jpg files are valid using imghdr
             elif ".jpg" in fileName:
-                # Ensure jpg files are valid using imghdr
                 if imghdr.what(os.path.join(filePath, fileName)) != "jpeg":
-                    open("error_files_deleted.txt", "a", newline="\n").write(processedURL + "\n")
-                    os.remove(os.path.join(filePath, fileName))
-                    print("Deleted invalid file.")
+                    writeError(processedURL, filePath, fileName)
+            # File passed all checks.
             else:
-                # File passed all checks
                 filesDownloaded += 1
-                print("Downloaded file #" + str(filesDownloaded) + ", line " + str(currentLine) + ", URL: "
-                      + processedURL)
+                print("Downloaded file #" + str(filesDownloaded) + ". Line:", str(currentLine), "URL:", processedURL)
         except Exception as errorException:
             # General error catching from urllib.request
             print("Error on line " + str(currentLine) + ", url: " + processedURL + ", " + str(errorException))
@@ -100,7 +103,7 @@ for i in inputCDXList:
                 errorOutputFile.write("\n")
             errorOutputFile.close()
     else:
-        print("Duplicate on line: " + str(currentLine) + " URL: " + processedURL)
+        print("File already exists. Line: " + str(currentLine) + " URL: " + processedURL)
     time.sleep(delayInputValue)
 
 print("Downloaded " + str(filesDownloaded) + " files in " + str(round(time.time() - scriptStartTime, 2)) + " seconds.")
