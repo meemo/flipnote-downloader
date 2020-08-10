@@ -1,18 +1,6 @@
 # Usage
 `downloader.py [delay in seconds (optional, defaults to 0)]`
 
-A pre downloaded version can be found here: https://archive.org/details/flipnote-hatena-archive
-
-Just run downloader.py in any directory, and let it run for roughly the week it will take to run.
-To modify the delay between downloads of files, edit line 7 of downloader.py
-**Warning: archive.org will most likely rate limit or even ban your IP from this without using proper delays and/or using a VPN. It is recommended to run this script in bursts over a long period of time, since the script will continue where you last finished downloading. The script will take about a month to run nonstop.**
-# Origin
-Project was inspired by https://github.com/Flipnote-Collective/flipnote-fetcher
-That project lacks a bulk downloading function, so I made one myself in this script.
-# cdx.txt explanation
-cdx.txt is derived from the output of archive.org's cdx tool by going to the following URL:
-
-
-    http://web.archive.org/cdx/search/cdx?matchType=prefix&url=jkz-dsidata.s3.amazonaws.com/kwz/
-
-And saving the page as a text file.
+**Warning: archive.org will most likely rate limit or even ban your IP from this without using an adequate delay value. The script will take about a month to run nonstop through all approximately 960,000 entries and totals approximately 133.5 GB.**
+# Description
+This script recursively downloads all files from saved webpages on archive.org's Wayback Machine that are from the S3 buckets of the now shut down Flipnote Gallery: World DSi Gallery. It contains almost all Flipnotes from the original Flipnote Haetna service on the DSi converted to the KWZ format ([source](https://www.archiveteam.org/index.php?title=Flipnote_Gallery_World)). Documentation on the KWZ format can be found [here](https://github.com/Flipnote-Collective/flipnote-studio-3d-docs/wiki/kwz-format).
