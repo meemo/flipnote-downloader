@@ -14,6 +14,7 @@ inputCDXList = []
 delayInputValue = 0
 filesDownloaded = 0
 currentLine = 0
+errorCount = 0
 
 urlOpener = urllib.request.build_opener()
 urlOpener.addheaders = [('Content-type', 'application/octet-stream')]
@@ -23,11 +24,20 @@ if os.path.exists(os.path.join(downloadingDirectory)) is False:
     os.mkdir(os.path.join(downloadingDirectory))
 
 
-def writeError(url, path, name):
-    print("Downloaded an invalid file: " + fileName)
-    open("error_files_deleted.txt", "a", newline="\n").write(processedURL + "\n")
-    os.remove(os.path.join(filePath, fileName))
-    print("Deleted invalid file.")
+def errorRecording(url, path, name, exception):
+    global errorCount, currentLine
+    errorCount += 1
+    lineFilled = str(currentLine).zfill(6)
+    print("Error occurred on line " + lineFilled + ", url: " + url + ", " + str(exception))
+    errorOutputFile = open("error.txt", "a", newline="\n")
+    errorOutputFile.write("Line_" + lineFilled + "_URL_" + url + "_Error_" + str(exception))
+    if os.path.isfile(os.path.join(path, name)) is True:
+        os.remove(os.path.join(path, name))
+        print("Deleted error file.")
+        errorOutputFile.write("_Deleted" + "\n")
+    else:
+        errorOutputFile.write("_No-Download" + "\n")
+    errorOutputFile.close()
 
 
 # Check for delay value specified
@@ -77,33 +87,25 @@ for i in inputCDXList:
             urllib.request.urlretrieve(processedURL, os.path.join(filePath, fileName))
             # Check for 0 byte files
             if os.path.getsize(os.path.join(filePath, fileName)) == 0:
-                writeError(processedURL, filePath, fileName)
+                errorRecording(processedURL, filePath, fileName, "0-Byte-File")
             # Valid kwz files always start with "KFH" when decoded to ansi.
             elif ".kwz" in fileName:
                 if str(open(os.path.join(filePath, fileName), "rb").read().decode("ansi")).startswith("KFH") is False:
-                    writeError(processedURL, filePath, fileName)
+                    errorRecording(processedURL, filePath, fileName, "Invalid-KWZ")
             # Ensure jpg files are valid using imghdr
             elif ".jpg" in fileName:
                 if imghdr.what(os.path.join(filePath, fileName)) != "jpeg":
-                    writeError(processedURL, filePath, fileName)
+                    errorRecording(processedURL, filePath, fileName, "Invalid-JPG")
             # File passed all checks.
             else:
                 filesDownloaded += 1
                 print("Downloaded file #" + str(filesDownloaded) + ". Line:", str(currentLine), "URL:", processedURL)
         except Exception as errorException:
             # General error catching from urllib.request
-            print("Error on line " + str(currentLine) + ", url: " + processedURL + ", " + str(errorException))
-            errorOutputFile = open("error.txt", "a", newline="\n")
-            errorOutputFile.write("Line_" + str(currentLine) + "_URL_" + processedURL + "_Error_" + str(errorException))
-            if os.path.isfile(os.path.join(filePath, fileName)) is True:
-                os.remove(os.path.join(filePath, fileName))
-                print("Deleted file created by error.")
-                errorOutputFile.write("_Deleted" + "\n")
-            else:
-                errorOutputFile.write("\n")
-            errorOutputFile.close()
+            errorRecording(processedURL, filePath, fileName, errorException)
     else:
         print("File already exists. Line: " + str(currentLine) + " URL: " + processedURL)
     time.sleep(delayInputValue)
 
 print("Downloaded " + str(filesDownloaded) + " files in " + str(round(time.time() - scriptStartTime, 2)) + " seconds.")
+print(str(errorCount) + " errors occurred.")
