@@ -4,6 +4,9 @@ import urllib.request
 import sys
 import imghdr
 
+# Meemo's Flipnote Downloader
+# From: https://github.com/meemo/flipnote-downloader
+#
 # Usage: downloader.py [delay in seconds (optional, defaults to 0)]
 
 scriptStartTime = time.time()
